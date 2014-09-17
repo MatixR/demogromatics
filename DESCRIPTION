@@ -1,7 +1,7 @@
 Package: demogromatics
 Title: Useful functions for using US Census Bureau shapefiles and data.
 Version: 0.1
-Authors@R: “Nancy Organ <nancy.organ@vanderbilt.edu>"
+Authors@R: "Nancy Organ <nancy.organ@vanderbilt.edu> [aut, cre]"
 Description: The current version of demogromatics supports US Census 2000 Summary File 3 demographics and corresponding shape files at the block group level.
 Depends: R (>= 3.0.2)
 License: What license is it under?
