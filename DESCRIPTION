@@ -1,0 +1,8 @@
+Package: demogromatics
+Title: Useful functions for using US Census Bureau shapefiles and data.
+Version: 0.1
+Authors@R: “Nancy Organ <nancy.organ@vanderbilt.edu> [aut, cre]"
+Description: What the package does (paragraph)
+Depends: R (>= 3.0.2)
+License: What license is it under?
+LazyData: true
