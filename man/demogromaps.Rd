@@ -3,8 +3,12 @@
 \name{demogromaps}
 \alias{demogromaps}
 \alias{demogromaps-package}
-\title{demogromaps.}
-\description{
-demogromaps.
+\title{Demographic Mapping and Analytics}
+\description{The current version of demogromatics supports US Census 2000 Summary File 3 demographics and corresponding shape files at the block group level.
 }
-
+\usage{
+download.shapefiles(url)
+process.api.data(datalist)
+process.shapefiles(folder, shapefile)
+}
+\author{Nancy Organ <nancy.organ@vanderbilt.edu>}
