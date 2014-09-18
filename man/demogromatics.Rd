@@ -5,6 +5,6 @@
 \alias{demogromaps-package}
 \title{demogromaps.}
 \description{
-demogromaps.
+Useful functions for using US Census Bureau shapefiles and data.
 }
 
