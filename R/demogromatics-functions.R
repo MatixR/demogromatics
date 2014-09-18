@@ -63,3 +63,45 @@ download.shapefiles = function(url){
   shapefiles.glued = data.frame(rbindlist(state.shapes))
   return(shapefiles.glued)
 }
+
+#'Geocodes street addresses to latitude, longitude, and 2010 Census fips code (GEOID). 
+#'@param id Name of each address or row in the data.frame containing addresses
+#'@param street Street address excluding appartment or unit numbers
+#'@param city City name
+#'@param state State abbreviation, ie "TN" vs "Tennessee"
+#'@param zip Zip code. First five characters are taken
+#'@export
+#'@examples
+#'geocode.2010("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709")
+#'
+#'@details There are NO DEFAULTS set. 
+#'
+#'
+geocode.2010 = function(id, street, city, state, zip){
+  street = gsub("[.#,]", "", street)
+  street = gsub(" ", "+", street)
+  city = gsub(" ", "", city)
+  zip = substring(zip, 1, 5)
+  url = paste("http://geocoding.geo.census.gov/geocoder/geographies/",
+            "address?street=", street,
+            "&city=", city, 
+            "&state=", state,
+            "&zip=", zip,
+            "&benchmark=Public_AR_Census2010&vintage=Census2010_Census2010&",
+            "layers=10&format=json", sep = "")
+
+  doc = lapply(url, function(x) {fromJSON(file = x)})
+  scraped = lapply(doc, function(x){ data.frame(unlist(x))})
+  scraped = lapply(scraped, function(x) {x[grep("coordinates.x$|coordinates.y$|GEOID$",row.names(x)),]})
+
+  scraped.frame = data.frame(NULL)
+
+  for(i in 1:length(scraped)){
+    scraped.frame[i,1] = ifelse(!is.na(unlist(scraped[i])[1]), as.numeric(as.character(unlist(scraped[i])[1])), NA)
+    scraped.frame[i,2] = ifelse(!is.na(unlist(scraped[i])[2]), as.numeric(as.character(unlist(scraped[i])[2])), NA)
+    scraped.frame[i,3] = ifelse(!is.na(unlist(scraped[i])[3]), as.numeric(as.character(unlist(scraped[i])[3])), NA)
+  }
+  scraped.frame = cbind(id, scraped.frame)
+  names(scraped.frame) = c("id", "long", "lat", "GEOID")
+  return(scraped.frame)
+}
