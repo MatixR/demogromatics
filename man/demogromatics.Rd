@@ -3,8 +3,14 @@
 \name{demogromaps}
 \alias{demogromaps}
 \alias{demogromaps-package}
-\title{demogromaps.}
+\title{demogromaps}
 \description{
 Useful functions for using US Census Bureau shapefiles and data.
 }
-
+\usage{
+download.shapefiles(url)
+geocode.2010(id, street, city, state, zip)
+process.api.data(datalist)
+process.shapefiles(folder, shapefile)
+}
+\author{Nancy Organ}
