@@ -106,3 +106,57 @@ geocode.2010 = function(id, street, city, state, zip){
   names(scraped.frame) = c("id", "long", "lat", "GEOID")
   return(scraped.frame)
 }
+
+#'@param token Go to http://www.census.gov/developers/ to request an API key. This function will not work if you do not have your own unique key. There is no default.
+#'@param state A state FIPS code (stored as a character, ie "47"). Defaults to "*" for every state in the US. 
+#'@param variables The desired variables for which you would like data. Variable names found here: http://api.census.gov/data/2000/sf3/variables.html
+#'@export
+#'@examples
+#'example = census.2000.bg(token = "nancysKey", state = "47", variables = "P001001")
+#'head(example)
+#' P001001        GEOID
+#'1    1035 470010201001
+#'2     751 470010201002
+#'3     577 470010201003
+#'4     970 470010202001
+#'5    3519 470010202002
+#'6     714 470010202003
+#'
+#'
+#'
+#'
+token = "d2a5fa6361536255294468c21a3fbb3d5bad59cc"
+census.2000.bg = function(token, state = "*", variables ){
+  mycounties.us = process.api.data(fromJSON(file=url(paste("http://api.census.gov/data/2000/sf3?key=", 
+                                                           token,"&get=P001001&for=county:*&in=state:", state, sep = ""))))$county 
+  mystates.us = process.api.data(fromJSON(file=url(paste("http://api.census.gov/data/2000/sf3?key=", 
+                                                         token,"&get=P001001&for=county:*&in=state:", state, sep = ""))))$state
+  per.county.us = matrix(paste(paste(paste("http://api.census.gov/data/2000/sf3?key=", token,
+                                           "&get=",variables,"&for=block+group:*&in=state:", mystates.us, sep = ""),
+                                     "+county:", sep = ""), mycounties.us, sep = ""),ncol = 1)
+  
+  
+  us.blocks = apply(per.county.us, 1, function(x) process.api.data(fromJSON(file=url(x))))
+  us.blocks.merged = data.frame(rbindlist(us.blocks))
+  us.blocks.merged$county = ifelse(nchar(us.blocks.merged$county) == 1, paste("00",us.blocks.merged$county, sep = ""),
+                                   ifelse(nchar(us.blocks.merged$county) == 2, paste("0", us.blocks.merged$county, sep = ""),
+                                          us.blocks.merged$county))
+  
+  us.blocks.merged$tract = ifelse(nchar(us.blocks.merged$tract) == 3, paste("000",us.blocks.merged$tract, sep = ""),
+                                  ifelse(nchar(us.blocks.merged$tract) == 4, paste("00", us.blocks.merged$tract, sep = ""),
+                                         ifelse(nchar(us.blocks.merged$tract) == 5, paste("0", us.blocks.merged$tract, sep = ""),
+                                                us.blocks.merged$tract)))
+  
+  us.blocks.merged = data.frame(us.blocks.merged, GEOID = apply(data.frame(us.blocks.merged)[,c("state", "county", "tract", "block.group")],
+                                                                1, paste, collapse = ""))
+  us.blocks.merged = subset(us.blocks.merged, select = -c(state, county, tract, block.group))
+  us.blocks.merged = apply(us.blocks.merged, 2, function(x){as.numeric(x)})
+  us.blocks.merged = data.frame(us.blocks.merged)
+  us.blocks.merged
+}
+
+#'
+#'
+#'
+#'
+#'
