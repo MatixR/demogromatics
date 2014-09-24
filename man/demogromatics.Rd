@@ -10,6 +10,7 @@ Useful functions for using US Census Bureau shapefiles and data.
 \usage{
 download.shapefiles(url)
 geocode.2010(id, street, city, state, zip)
+census.2000.bg(token, state = "*", variables)
 process.api.data(datalist)
 process.shapefiles(folder, shapefile)
 geo.circle(center = c(0,0), r = 100, n = 100)
