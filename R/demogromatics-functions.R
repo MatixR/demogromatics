@@ -125,7 +125,6 @@ geocode.2010 = function(id, street, city, state, zip){
 #'
 #'
 #'
-token = "d2a5fa6361536255294468c21a3fbb3d5bad59cc"
 census.2000.bg = function(token, state = "*", variables ){
   mycounties.us = process.api.data(fromJSON(file=url(paste("http://api.census.gov/data/2000/sf3?key=", 
                                                            token,"&get=P001001&for=county:*&in=state:", state, sep = ""))))$county 
@@ -156,7 +155,27 @@ census.2000.bg = function(token, state = "*", variables ){
 }
 
 #'
-#'
-#'
-#'
-#'
+#'@param center Coordinates of the center point. Defaults to c(0,0).
+#'@param r Radius in miles. Defaults to 100 miles. 
+#'@param n Number of points to define the circle. Defaults to 100. 
+#'@export
+#'@examples
+#'states = Cs(tennessee, kentucky, mississippi, alabama, georgia)
+#'tn = map_data("county", region = states)
+#'Y = mean(tn[tn$subregion == "davidson",]$lat)
+#'X = mean(tn[tn$subregion == "davidson",]$long)
+#'around.nashville = circle(center = c(X,Y), r = 100)
+#'around.nashville = data.frame(around.nashville, group = rep(1, dim(around.nashville)[1]))
+#'ggplot(tn, aes(x = long, y = lat, group = group)) + 
+#'geom_polygon(aes(fill = group),color = NA) +
+#'  coord_map() +
+#'  geom_point(aes(X,Y)) + 
+#'  geom_path(dat = around.nashville, aes(x = x, y = y, group = group)) + 
+#'  geom_polygon(dat = around.nashville, aes(x = x, y = y, group = group), alpha = 1/5, fill = "hotpink") 
+
+geo.circle = function(center = c(0,0), r = 100, n = 100){
+  theta = seq(0,365,length.out = n)
+  x = center[1] + (r/69)*cos(theta*pi/180)
+  y = center[2] + abs(sin(center[2]*pi/180))*(r/69)*sin(theta*pi/180)
+  return(data.frame(x,y))
+}

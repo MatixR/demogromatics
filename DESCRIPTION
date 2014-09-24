@@ -5,5 +5,10 @@ Authors@R: "Nancy Organ <nancy.organ@vanderbilt.edu> [aut, cre]"
 Description: The current version of demogromatics supports US Census 2000
     Summary File 3 demographics and corresponding shape files at the block
     group level.
-Depends: R (>= 3.0.2), rjson, rgdal, ggplot2, data.table
+Depends:
+    R (>= 3.0.2),
+    rjson,
+    rgdal,
+    ggplot2,
+    data.table
 LazyData: true

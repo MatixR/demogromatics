@@ -12,5 +12,6 @@ download.shapefiles(url)
 geocode.2010(id, street, city, state, zip)
 process.api.data(datalist)
 process.shapefiles(folder, shapefile)
+geo.circle (center = c(0,0), r = 100, n = 100)
 }
 \author{Nancy Organ}
