@@ -10,5 +10,7 @@ Depends:
     rjson,
     rgdal,
     ggplot2,
-    data.table
+    data.table,
+    Hmisc,
+    plyr
 LazyData: true
