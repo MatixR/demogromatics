@@ -14,3 +14,4 @@ Depends:
     Hmisc,
     plyr
 LazyData: true
+LazyLoad: true
