@@ -179,3 +179,64 @@ geo.circle = function(center = c(0,0), r = 100, n = 100){
   y = center[2] + abs(sin(center[2]*pi/180))*(r/69)*sin(theta*pi/180)
   return(data.frame(x,y))
 }
+
+
+#'Geocodes street addresses to latitude, longitude, and desired year's FIPS code (GEOID).
+#'@param id Name of each address or row in the data.frame containing addresses
+#'@param street Street address excluding appartment or unit numbers
+#'@param city City name
+#'@param state State abbreviation, ie "TN" vs "Tennessee"
+#'@param zip Zip code. First five characters are taken
+#'@export
+#'@examples
+#'mapquest.geocoder("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709")
+#'
+#'@details There are NO DEFAULTS set. 
+#'
+#'
+
+
+mapquest.geocoder = function(id, street, city, state, zip, year){
+  coordinates = data.frame(NULL)
+  here = paste(street, city, state, zip, sep = " ")
+  for(i in 1:length(here)){
+    url = paste('http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luur200anu,aw=o5-9aywq4&callback=renderOptions&inFormat=kvp&outFormat=xml&location=',here[i],'&thumbMaps=false', sep = "")
+    doc = xmlTreeParse(url)
+    root = xmlRoot(doc)
+    coordinates[i,1] = id[i]
+    coordinates[i,2] = xmlValue(root[[2]][[1]][["locations"]][["location"]][["latLng"]][["lat"]]) #lat
+    coordinates[i,3] = xmlValue(root[[2]][[1]][["locations"]][["location"]][["latLng"]][["lng"]]) #lng
+    coordinates[i,4] = FIPS.find(coordinates[i,2], coordinates[i,3], year)
+    coordinates[i,5] = street[i]
+    coordinates[i,6] = city[i]
+    coordinates[i,7] = state[i]
+    coordinates[i,8] = zip[i]
+  }
+  names(coordinates) = c("id", "lat", "lng", "GEOID", "street", "city", "state", "zip")
+  coordinates
+}
+
+#'Finds FIPS code for a given latitude and longitude
+#'@param lat Vector of latitudes
+#'@param long Vector of longitudes
+#'@param year Census year, ie. 2000, 2010, etc. 
+#'@export
+#'@examples
+#'FIPS.find(lat = 37.87622, long = -122.2585, year = 2000)
+#'[1] "060014225002"
+#'
+#'
+#'
+FIPS.find = function(lat, long, year){
+  url = paste("http://data.fcc.gov/api/block/", year,
+              "/find?latitude=", lat,
+              "&longitude=", long,
+              "&showall=true",
+              "&format=xml",sep = "")
+  doc = lapply(url, function(x) {xmlParse(x)})
+  root = lapply(doc, function(x) {xmlRoot(x)})
+  fips = lapply(root, function(x) {unname(xmlAttrs(x[["Block"]]))})
+  fips = unlist(lapply(fips, function(x) {ifelse(is.null(x), NA, x)}))
+  fips = lapply(fips, function(x) {substr(x, 1, 12)})
+  as.vector(unlist(fips))
+}
