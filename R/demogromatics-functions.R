@@ -240,3 +240,4 @@ FIPS.find = function(lat, long, year){
   fips = lapply(fips, function(x) {substr(x, 1, 12)})
   as.vector(unlist(fips))
 }
+
