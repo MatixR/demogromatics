@@ -73,12 +73,12 @@ download.shapefiles = function(url){
 #'@param zip Zip code. First five characters are taken
 #'@export
 #'@examples
-#'geocode.2010("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709")
+#'geocode.2010("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709", 2010)
 #'
 #'@details There are NO DEFAULTS set. 
 #'
 #'
-geocode.2010 = function(id, street, city, state, zip){
+census.geocoder = function(id, street, city, state, zip, year){
   street = gsub("[.#,]", "", street)
   street = gsub(" ", "+", street)
   city = gsub(" ", "", city)
@@ -98,12 +98,18 @@ geocode.2010 = function(id, street, city, state, zip){
   scraped.frame = data.frame(NULL)
 
   for(i in 1:length(scraped)){
-    scraped.frame[i,1] = ifelse(!is.na(unlist(scraped[i])[1]), as.numeric(as.character(unlist(scraped[i])[1])), NA)
-    scraped.frame[i,2] = ifelse(!is.na(unlist(scraped[i])[2]), as.numeric(as.character(unlist(scraped[i])[2])), NA)
-    scraped.frame[i,3] = ifelse(!is.na(unlist(scraped[i])[3]), as.numeric(as.character(unlist(scraped[i])[3])), NA)
+    scraped.frame[i,1] = ifelse(!is.na(unlist(scraped[i])[2]), as.numeric(as.character(unlist(scraped[i])[2])), NA)
+    scraped.frame[i,2] = ifelse(!is.na(unlist(scraped[i])[1]), as.numeric(as.character(unlist(scraped[i])[1])), NA)
+    scraped.frame[i,3] = ifelse(!is.na(unlist(scraped[i])[3]) & year == 2010, as.numeric(as.character(unlist(scraped[i])[3])),
+                        ifelse(!is.na(unlist(scraped[i])[3]) & year != 2010, FIPS.find(long = scraped.frame[i,2], lat = scraped.frame[i,1], year), 
+                                       NA))
+    scraped.frame[i,4] = street[i]
+    scraped.frame[i,5] = city[i]
+    scraped.frame[i,6] = state[i]
+    scraped.frame[i,7] = zip[i]
   }
   scraped.frame = cbind(id, scraped.frame)
-  names(scraped.frame) = c("id", "long", "lat", "GEOID")
+  names(scraped.frame) = c("id", "lat", "long", "GEOID", "street", "city", "state", "zip")
   return(scraped.frame)
 }
 
@@ -195,12 +201,15 @@ geo.circle = function(center = c(0,0), r = 100, n = 100){
 #'
 #'
 
-
-mapquest.geocoder = function(id, street, city, state, zip, year){
+mapquest.geocoder = function(id, street, city, state, zip, key, year){
   coordinates = data.frame(NULL)
-  here = paste(street, city, state, zip, sep = " ")
-  for(i in 1:length(here)){
-    url = paste('http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luur200anu,aw=o5-9aywq4&callback=renderOptions&inFormat=kvp&outFormat=xml&location=',here[i],'&thumbMaps=false', sep = "")
+  for(i in 1:length(id)){
+    url = paste('http://www.mapquestapi.com/geocoding/v1/address?key=', key,
+                '&outFormat=xml&xml=<address><location>',
+                '<street>', street[i], '</street>',
+                '<city>', city[i], '</city>',
+                '<state>', state[i], '</state>',
+                '<postalCode>', zip[i], '</postalCode></location></address>',  sep = "")
     doc = xmlTreeParse(url)
     root = xmlRoot(doc)
     coordinates[i,1] = id[i]
@@ -212,7 +221,7 @@ mapquest.geocoder = function(id, street, city, state, zip, year){
     coordinates[i,7] = state[i]
     coordinates[i,8] = zip[i]
   }
-  names(coordinates) = c("id", "lat", "lng", "GEOID", "street", "city", "state", "zip")
+  names(coordinates) = c("id", "lat", "long", "GEOID", "street", "city", "state", "zip")
   coordinates
 }
 
@@ -240,4 +249,5 @@ FIPS.find = function(lat, long, year){
   fips = lapply(fips, function(x) {substr(x, 1, 12)})
   as.vector(unlist(fips))
 }
+
 

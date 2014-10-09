@@ -2,9 +2,9 @@
 
 export(FIPS.find)
 export(census.2000.bg)
+export(census.geocoder)
 export(download.shapefiles)
 export(geo.circle)
-export(geocode.2010)
 export(mapquest.geocoder)
 export(process.api.data)
 export(process.shapefiles)

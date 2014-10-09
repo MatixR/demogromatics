@@ -12,6 +12,7 @@ Depends:
     ggplot2,
     data.table,
     Hmisc,
-    plyr
+    plyr,
+    XML
 LazyData: true
 LazyLoad: true

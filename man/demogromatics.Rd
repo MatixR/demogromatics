@@ -8,7 +8,8 @@
 Process and display Census data
 }
 \usage{
-census.2000.bg(token, state = "*", variables)download.shapefiles()
+census.2000.bg(token, state = "*", variables)
+census.geocoder(id, street, city, state, zip, year)
 download.shapefiles(url)
 FIPS.find(lat, long, year)
 geo.circle(center = c(0, 0), r = 100, n = 100)
@@ -16,6 +17,5 @@ geocode.2010(id, street, city, state, zip)
 mapquest.geocoder(id, street, city, state, zip, year)
 process.api.data(datalist)
 process.shapefiles(folder, shapefile)
-
 }
 \author{Nancy Organ}
