@@ -181,7 +181,7 @@ census.2000.bg = function(token, state = "*", variables ){
 
 geo.circle = function(center = c(0,0), r = 100, n = 100){
   theta = seq(0,365,length.out = n)
-  x = center[1] + (r/69)*cos(theta*pi/180)
+  x = center[1] + abs(cos(center[2]*pi/180))*(r/69)*cos(theta*pi/180)
   y = center[2] + abs(sin(center[2]*pi/180))*(r/69)*sin(theta*pi/180)
   return(data.frame(x,y))
 }
