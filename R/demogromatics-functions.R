@@ -73,7 +73,7 @@ download.shapefiles = function(url){
 #'@param zip Zip code. First five characters are taken
 #'@export
 #'@examples
-#'geocode.2010("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709", 2010)
+#'census.geocoder("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709", 2010)
 #'
 #'@details There are NO DEFAULTS set. 
 #'
