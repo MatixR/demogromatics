@@ -195,7 +195,7 @@ geo.circle = function(center = c(0,0), r = 100, n = 100){
 #'@param zip Zip code. First five characters are taken
 #'@export
 #'@examples
-#'mapquest.geocoder("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709")
+#'mapquest.geocoder("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709", key = YOURKEY, year = 2010)
 #'
 #'@details There are NO DEFAULTS set. 
 #'
