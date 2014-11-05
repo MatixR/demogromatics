@@ -23,6 +23,6 @@ Geocodes street addresses to latitude, longitude, and desired year's FIPS code (
 There are NO DEFAULTS set.
 }
 \examples{
-mapquest.geocoder("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709")
+mapquest.geocoder("Cloyne", "2600 Ridge Road", "Berkeley", "CA", "94709", key = YOURKEY, year = 2010)
 }
 
