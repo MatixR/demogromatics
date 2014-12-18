@@ -204,7 +204,7 @@ geo.circle = function(center = c(0,0), r = 100, n = 100){
 mapquest.geocoder = function(id, street, city, state, zip, key, year){
   coordinates = data.frame(NULL)
   for(i in 1:length(id)){
-    url = paste('http://www.mapquestapi.com/geocoding/v1/address?key=', URLdecode(key),
+    url = paste('http://open.mapquestapi.com/geocoding/v1/address?key=', URLdecode(key),
                 '&outFormat=xml&xml=<address><location>',
                 '<street>', street[i], '</street>',
                 '<city>', city[i], '</city>',
