@@ -275,10 +275,6 @@ state.2000 = function(token, state = "*", variables){
   rbind.dat
 }
 
-state.2000(token = token, state = c(47:49), variables = c("P001001", "PCT014003"))
-state.2000(token = token, variables = c("P001001", "PCT014003"))
-state.2000(token = token, state = "*", variables = c("P001001", "PCT014003"))
-
 #' 2000 county-level data
 #' @param token Unique API token
 #' @param state Vector of state numbers. Defaults to "*" for all states. 
