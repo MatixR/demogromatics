@@ -251,3 +251,168 @@ FIPS.find = function(lat, long, year){
 }
 
 
+
+
+#' 2000 state-level data
+#' @param token Unique API token
+#' @param state Vector of state numbers. Defaults to "*" for all states. 
+#' @param variables Vector of variable codes.
+#' @export
+#' @examples
+#' state.2000(token = token, state = c(47:49), variables = c("P001001", "PCT014003"))
+#' state.2000(token = token, variables = c("P001001", "PCT014003"))
+#' state.2000(token = token, state = "*", variables = c("P001001", "PCT014003"))
+
+state.2000 = function(token, state = "*", variables){
+  state = as.character(state)
+  variables = paste(variables, collapse = ",")
+  my.url = matrix(paste("http://api.census.gov/data/2000/sf3?key=", token,
+                        "&get=",variables, "&for=state:", state, sep = ""), ncol = 1)
+  
+  process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
+  rbind.dat = data.frame(rbindlist(process.url))
+  rbind.dat = data.frame(state = rbind.dat$state, rbind.dat[,1:(length(names(rbind.dat))-1)])
+  rbind.dat
+}
+
+state.2000(token = token, state = c(47:49), variables = c("P001001", "PCT014003"))
+state.2000(token = token, variables = c("P001001", "PCT014003"))
+state.2000(token = token, state = "*", variables = c("P001001", "PCT014003"))
+
+#' 2000 county-level data
+#' @param token Unique API token
+#' @param state Vector of state numbers. Defaults to "*" for all states. 
+#' @param county Vector of county numbers. Defaults to "*" for all counties. 
+#' @param variables Vector of variable codes.
+#' @export
+#' @examples
+#' county.2000(token = token, state = c(47:49), county = "*", variables = c("P001001", "PCT014003"))
+#' county.2000(token = token, state = c(47), county = 5,variables = c("P001001", "PCT014003","P001001"))
+
+
+county.2000 = function(token, state = "*", county = "*", variables){
+  state = as.character(state)
+  county = as.character(county)
+  variables = paste(variables, collapse = ",")
+  
+  if(state == "*"){#if they want all states, they want * county from them
+    state = process.api.data(fromJSON(file=url(
+      paste("http://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=state:*", sep = ""))))$state
+    my.url = matrix(paste("http://api.census.gov/data/2000/sf3?key=", token, "&get=", 
+                          variables,"&for=county:*&in=state:", state, sep = ""),ncol = 1)
+  }
+  if(state != "*"){
+    if(county == "*"){mycounties = as.list(rep("*", length(state)))
+    }else{
+      mycounties = list(county)
+    }
+    names(mycounties) = state
+    mystates = expand.states(mycounties)
+    my.url = matrix(paste("http://api.census.gov/data/2000/sf3?key=", token, "&get=", 
+                          variables,"&for=county:", unlist(mycounties), "&in=state:", 
+                          unlist(mystates), sep = ""),ncol = 1)
+  }
+  
+  process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
+  rbind.dat = data.frame(rbindlist(process.url))
+  rbind.dat = data.frame(state = rbind.dat$state, county = rbind.dat$county, 
+                         rbind.dat[,1:(ncol(rbind.dat)-2)])
+  list(my.url, head(rbind.dat))
+}
+
+#' 2000 tract-level data
+#' @param token Unique API token
+#' @param state Vector of state numbers. Defaults to "*" for all states. 
+#' @param county Vector of county numbers. Defaults to "*" for all counties. 
+#' @param variables Vector of variable codes.
+#' @export
+#' @examples
+#' tract.2000(token = token, state = 47, county = "*", variables = c("P001001", "PCT014003"))
+#' tract.2000(token = token, state = 47, county = 5, variables = c("P001001", "PCT014003"))
+
+tract.2000 = function(token, state = "*", county = "*", variables){
+  # I just took out tract level; who really cares?
+  state = as.character(state)
+  county = as.character(county)
+  variables = paste(variables, collapse = ",")
+  
+  if(county == "*"){
+    my.url = matrix(paste("http://api.census.gov/data/2000/sf3?key=", token,
+                          "&get=",variables,"&for=tract:*&in=state:", state, sep = ""),ncol = 1)
+  }else{
+    mycounties = list(county)
+    names(mycounties) = state
+    mystates = expand.states(mycounties)
+    my.url = matrix(paste("http://api.census.gov/data/2000/sf3?key=", token,
+                          "&get=",variables,"&for=tract:*&in=state:", unlist(mystates),
+                          "+county:", unlist(mycounties), sep = ""),ncol = 1)
+  }
+  process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
+  rbind.dat = data.frame(rbindlist(process.url))
+  rbind.dat = data.frame(state = rbind.dat$state, county = rbind.dat$county, 
+                         tract = rbind.dat$tract, rbind.dat[,1:(ncol(rbind.dat)-3)])
+  list(my.url, head(rbind.dat))  
+}
+
+
+
+#' 2000 blockgroup-level data
+#' @param token Unique API token
+#' @param state Vector of state numbers. Defaults to "*" for all states. 
+#' @param county Vector of county numbers. Defaults to "*" for all counties. 
+#' @param blockgroup Vector of blockgroup numbers. Defaults to "*" for all blockgroup 
+#' @param variables Vector of variable codes.
+#' @export
+#' @examples
+#' blockgroup.2000(token = token, state = c(47, 48), county = "*", blockgroup = "*", variables = c("P001001","P001001"))
+#' blockgroup.2000(token = token, state = 47, county = 1, blockgroup = "*", variables = c("P001001","P001001"))
+#' 
+blockgroup.2000 = function(token, state = "*", county = "*", blockgroup = "*", variables){
+  state = as.character(state)
+  county = as.character(county)
+  blockgroup = as.character(blockgroup)
+  variables = paste(variables, collapse = ",")
+  
+  if(state == "*"){
+    state = process.api.data(fromJSON(file=url(
+      paste("http://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=state:*", sep = ""))))$state
+  }
+  
+  if(county == "*"){
+    mycounties = sapply(state, get.counties, token = token)
+    mystates = expand.states(mycounties)
+    my.url = matrix(paste("http://api.census.gov/data/2000/sf3?key=", token,
+                          "&get=",variables,"&for=block+group:*&in=state:", unlist(mystates),
+                          "+county:", unlist(mycounties), sep = ""),ncol = 1)
+  }else{
+    mycounties = list(county)
+    names(mycounties) = state
+    mystates = expand.states(mycounties)
+    my.url = matrix(paste("http://api.census.gov/data/2000/sf3?key=", token,
+                          "&get=",variables,"&for=block+group:*&in=state:", unlist(mystates),
+                          "+county:", unlist(mycounties), sep = ""),ncol = 1)
+  }
+  
+  process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
+  rbind.dat = data.frame(rbindlist(process.url))
+  rbind.dat = data.frame(state = rbind.dat$state, county = rbind.dat$county,
+                         tract = rbind.dat$tract, blockgroup = rbind.dat$block.group,
+                         rbind.dat[,1:(ncol(rbind.dat)-4)])
+  list(head(my.url), head(rbind.dat))
+}
+
+############# functions for blockgroup.2000 
+
+get.counties = function(single.state, token){
+  process.api.data(fromJSON(file=url(
+    paste("http://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=county:*&in=state:", single.state, sep = ""))))$county
+}
+
+expand.states = function(a){
+  thing = list(NULL)
+  for(i in 1:length(a)){
+    thing[[i]] = rep(names(a)[i], length(a[[i]]))
+  }
+  thing
+}
+

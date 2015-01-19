@@ -1,5 +1,5 @@
-#' demogromaps.
+#' demogromatics.
 #'
-#' @name demogromaps
+#' @name demogromatics
 #' @docType package
 NULL
