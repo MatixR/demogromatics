@@ -398,3 +398,17 @@ blockgroup.2000 = function(token, state = "*", county = "*", blockgroup = "*", v
 }
 
 
+#'
+
+get.counties = function(single.state, token){
+  process.api.data(fromJSON(file=url(
+    paste("http://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=county:*&in=state:", single.state, sep = ""))))$county
+}
+
+expand.states = function(a){
+  thing = list(NULL)
+  for(i in 1:length(a)){
+    thing[[i]] = rep(names(a)[i], length(a[[i]]))
+  }
+  thing
+}
