@@ -271,7 +271,8 @@ state.2000 = function(token, state = "*", variables){
   
   process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
   rbind.dat = data.frame(rbindlist(process.url))
-  rbind.dat = data.frame(state = rbind.dat$state, rbind.dat[,1:(length(names(rbind.dat))-1)])
+  #rbind.dat = data.frame(state = rbind.dat$state, rbind.dat[,1:(length(names(rbind.dat))-1)])
+  rbind.dat = rbind.dat[, c(tail(seq_len(ncol(rbind.dat)), 1), seq_len(ncol(rbind.dat) - 1))] 
   rbind.dat
 }
 
@@ -311,9 +312,10 @@ county.2000 = function(token, state = "*", county = "*", variables){
   
   process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
   rbind.dat = data.frame(rbindlist(process.url))
-  rbind.dat = data.frame(state = rbind.dat$state, county = rbind.dat$county, 
-                         rbind.dat[,1:(ncol(rbind.dat)-2)])
-  list(my.url, head(rbind.dat))
+  #rbind.dat = data.frame(state = rbind.dat$state, county = rbind.dat$county, 
+  #                       rbind.dat[,1:(ncol(rbind.dat)-2)])
+  rbind.dat = rbind.dat[, c(tail(seq_len(ncol(rbind.dat)), 2), seq_len(ncol(rbind.dat) - 2))] 
+  rbind.dat
 }
 
 #' 2000 tract-level data
@@ -345,9 +347,10 @@ tract.2000 = function(token, state = "*", county = "*", variables){
   }
   process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
   rbind.dat = data.frame(rbindlist(process.url))
-  rbind.dat = data.frame(state = rbind.dat$state, county = rbind.dat$county, 
-                         tract = rbind.dat$tract, rbind.dat[,1:(ncol(rbind.dat)-3)])
-  list(my.url, head(rbind.dat))  
+  #rbind.dat = data.frame(state = rbind.dat$state, county = rbind.dat$county, 
+  #                       tract = rbind.dat$tract, rbind.dat[,1:(ncol(rbind.dat)-3)])
+  rbind.dat = rbind.dat[, c(tail(seq_len(ncol(rbind.dat)), 3), seq_len(ncol(rbind.dat) - 3))] 
+  rbind.dat
 }
 
 
@@ -391,10 +394,11 @@ blockgroup.2000 = function(token, state = "*", county = "*", blockgroup = "*", v
   
   process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
   rbind.dat = data.frame(rbindlist(process.url))
-  rbind.dat = data.frame(state = rbind.dat$state, county = rbind.dat$county,
-                         tract = rbind.dat$tract, blockgroup = rbind.dat$block.group,
-                         rbind.dat[,1:(ncol(rbind.dat)-4)])
-  list(head(my.url), head(rbind.dat))
+  #rbind.dat = data.frame(state = rbind.dat$state, county = rbind.dat$county,
+  #                       tract = rbind.dat$tract, blockgroup = rbind.dat$block.group,
+  #                       rbind.dat[,1:(ncol(rbind.dat)-4)])
+  rbind.dat = rbind.dat[, c(tail(seq_len(ncol(rbind.dat)), 4), seq_len(ncol(rbind.dat) - 4))] 
+  rbind.dat
 }
 
 
@@ -412,3 +416,4 @@ expand.states = function(a){
   }
   thing
 }
+
