@@ -7,4 +7,16 @@
 \description{
 Demogromatics
 }
-
+\usage{state.2000(token, state = "*", variables)}
+\usage{county.2000(token, state = "*", county = "*", variables)}
+\usage{tract.2000(token, state = "*", county = "*", variables)}
+\usage{blockgroup.2000(token, state = "*", county = "*", blockgroup = "*", variables)}
+\usage{FIPS.find(lat, long, year)}
+\usage{process.shapefiles(folder, shapefile)}
+\usage{geo.circle(center = c(0, 0), r = 100, n = 100)}
+\usage{download.shapefiles(url)}
+\usage{census.geocoder(id, street, city, state, zip, year)}
+\usage{census.2000.bg(token, state = "*", variables)}
+\usage{process.shapefiles(folder, shapefile)}
+\usage{mapquest.geocoder(id, street, city, state, zip, key, year)}
+\usage{process.api.data(datalist)}
