@@ -253,7 +253,7 @@ FIPS.find = function(lat, long, year){
 
 
 
-#' 2000 state-level data
+#' State-level Decennial Census data
 #' @param token Unique API token
 #' @param state Vector of state numbers. Defaults to "*" for all states. 
 #' @param variables Vector of variable codes.
@@ -261,11 +261,11 @@ FIPS.find = function(lat, long, year){
 #' @param survey Either "sf1" or "sf3"
 #' @export
 #' @examples
-#' state.2000(token = token, state = c(47:49), variables = c("P001001", "PCT014003"))
-#' state.2000(token = token, variables = c("P001001", "PCT014003"))
-#' state.2000(token = token, state = "*", variables = c("P001001", "PCT014003"))
+#' state.data(token = token, state = c(47:49), variables = c("P001001", "PCT014003"))
+#' state.data(token = token, variables = c("P001001", "PCT014003"))
+#' state.data(token = token, state = "*", variables = c("P001001", "PCT014003"))
 
-state.2000 = function(token, state = "*", variables, year = 2010, survey = "sf1"){
+state.data = function(token, state = "*", variables, year = 2010, survey = "sf1"){
   state = as.character(state)
   variables = paste(variables, collapse = ",")
   year = as.character(year)
@@ -278,7 +278,7 @@ state.2000 = function(token, state = "*", variables, year = 2010, survey = "sf1"
   rbind.dat
 }
 
-#' 2000 county-level data
+#' County-level Decennial Census data
 #' @param token Unique API token
 #' @param state Vector of state numbers. Defaults to "*" for all states. 
 #' @param county Vector of county numbers. Defaults to "*" for all counties. 
@@ -287,11 +287,11 @@ state.2000 = function(token, state = "*", variables, year = 2010, survey = "sf1"
 #' @param survey Either "sf1" or "sf3"
 #' @export
 #' @examples
-#' county.2000(token = token, state = c(47:49), county = "*", variables = c("P001001", "PCT014003"))
-#' county.2000(token = token, state = c(47), county = 5,variables = c("P001001", "PCT014003","P001001"))
+#' county.data(token = token, state = c(47:49), county = "*", variables = c("P001001", "PCT014003"))
+#' county.data(token = token, state = c(47), county = 5,variables = c("P001001", "PCT014003","P001001"))
 
 
-county.2000 = function(token, state = "*", county = "*", variables, year = 2010, survey = "sf1"){
+county.data = function(token, state = "*", county = "*", variables, year = 2010, survey = "sf1"){
   state = as.character(state)
   county = as.character(county)
   year = as.character(year)
@@ -322,7 +322,7 @@ county.2000 = function(token, state = "*", county = "*", variables, year = 2010,
 }
 
 
-#' 2000 tract-level data
+#' Tract-level Decennial Census data
 #' @param token Unique API token
 #' @param state Vector of state numbers. Defaults to "*" for all states. 
 #' @param county Vector of county numbers. Defaults to "*" for all counties. 
@@ -331,10 +331,10 @@ county.2000 = function(token, state = "*", county = "*", variables, year = 2010,
 #' @param survey Either "sf1" or "sf3"
 #' @export
 #' @examples
-#' tract.2000(token = token, state = 47, county = "*", variables = c("P001001", "PCT014003"))
-#' tract.2000(token = token, state = 47, county = 5, variables = c("P001001", "PCT014003"))
+#' tract.data(token = token, state = 47, county = "*", variables = c("P001001", "PCT014003"))
+#' tract.data(token = token, state = 47, county = 5, variables = c("P001001", "PCT014003"))
 
-tract.2000 = function(token, state = "*", county = "*", variables, year = 2010, survey = "sf1"){
+tract.data = function(token, state = "*", county = "*", variables, year = 2010, survey = "sf1"){
   state = as.character(state)
   county = as.character(county)
   year = as.character(year)
@@ -362,7 +362,7 @@ tract.2000 = function(token, state = "*", county = "*", variables, year = 2010, 
 }
 
 
-#' 2000 blockgroup-level data
+#' Blockgroup-level Decennial Census data
 #' @param token Unique API token
 #' @param state Vector of state numbers. Defaults to "*" for all states. 
 #' @param county Vector of county numbers. Defaults to "*" for all counties. 
@@ -372,10 +372,10 @@ tract.2000 = function(token, state = "*", county = "*", variables, year = 2010, 
 #' @param survey Either "sf1" or "sf3"
 #' @export
 #' @examples
-#' blockgroup.2000(token = token, state = c(47, 48), county = "*", blockgroup = "*", variables = c("P001001","P001001"))
-#' blockgroup.2000(token = token, state = 47, county = 1, blockgroup = "*", variables = c("P001001","P001001"))
+#' blockgroup.data(token = token, state = c(47, 48), county = "*", blockgroup = "*", variables = c("P001001","P001001"))
+#' blockgroup.data(token = token, state = 47, county = 1, blockgroup = "*", variables = c("P001001","P001001"))
 #' 
-blockgroup.2000 = function(token, state = "*", county = "*", blockgroup = "*", variables, year = 2010, survey = "sf1"){
+blockgroup.data = function(token, state = "*", county = "*", blockgroup = "*", variables, year = 2010, survey = "sf1"){
   state = as.character(state)
   county = as.character(county)
   blockgroup = as.character(blockgroup)
