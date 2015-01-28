@@ -3,7 +3,7 @@
 \name{demogromatics}
 \alias{demogromatics}
 \alias{demogromatics-package}
-\title{Cesus Data Aquisition and Mapping}
+\title{Census Data Aquisition and Mapping}
 \description{
 Demogromatics
 }
