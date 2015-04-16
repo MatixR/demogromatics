@@ -16,6 +16,10 @@ blockgroup.data(token, state = "*", county = "*", blockgroup = "*",
 \item{blockgroup}{Vector of blockgroup numbers. Defaults to "*" for all blockgroup}
 
 \item{variables}{Vector of variable codes.}
+
+\item{year}{Year of survey. Defaults to 2010.}
+
+\item{survey}{Survey name, either "sf1" or "sf3". Defaults to "sf1".}
 }
 \description{
 Blockgroup-level Decennial Census data

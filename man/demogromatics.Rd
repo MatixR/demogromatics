@@ -8,10 +8,10 @@
 Demogromatics
 }
 \usage{
-state.data(token, state = "*", variables)
-county.data(token, state = "*", county = "*", variables)
-tract.data(token, state = "*", county = "*", variables)
-blockgroup.data(token, state = "*", county = "*", blockgroup = "*", variables)
+state.data(token, state = "*", variables, year = 2010, survey = "sf1")
+county.data(token, state = "*", county = "*", variables, year = 2010, survey = "sf1")
+tract.data(token, state = "*", county = "*", variables, year = 2010, survey = "sf1")
+blockgroup.data(token, state = "*", county = "*", blockgroup = "*", variables, year = 2010, survey = "sf1")
 FIPS.find(lat, long, year)
 process.shapefiles(folder, shapefile)
 geo.circle(center = c(0, 0), r = 100, n = 100)

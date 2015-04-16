@@ -13,6 +13,10 @@ county.data(token, state = "*", county = "*", variables)
 \item{county}{Vector of county numbers. Defaults to "*" for all counties.}
 
 \item{variables}{Vector of variable codes.}
+
+\item{year}{Year of survey. Defaults to 2010.}
+
+\item{survey}{Survey name, either "sf1" or "sf3". Defaults to "sf1".}
 }
 \description{
 County-level Decennial Census data

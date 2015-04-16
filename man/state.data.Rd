@@ -11,6 +11,10 @@ state.data(token, state = "*", variables)
 \item{state}{Vector of state numbers. Defaults to "*" for all states.}
 
 \item{variables}{Vector of variable codes.}
+
+\item{year}{Year of survey. Defaults to 2010.}
+
+\item{survey}{Survey name, either "sf1" or "sf3". Defaults to "sf1".}
 }
 \description{
 State-level Decennial Census data
