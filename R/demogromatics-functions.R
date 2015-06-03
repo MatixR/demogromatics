@@ -408,9 +408,77 @@ blockgroup.data = function(token, state = "*", county = "*", blockgroup = "*", v
   rbind.dat
 }
 
+#' Blockgroup-level Decennial Census data
+#' @param addresses File path to a .csv or data frame of addresses
+#' @param mapquest.key You can get a key by creating a developper's account at http://developer.mapquest.com/web/info/account/app-keys
+#' @param census.key You can get a key from http://www.census.gov/developers/
+#' @export
+
+SES.index = function(addresses, mapquest.key, census.key){
+  
+  addresses = read.csv(addresses)
+  names(addresses) = c("id", "street", "city", "state", "zip")
+  addresses$street = gsub("[.#@,]", "", addresses$street)
+  addresses$street = gsub(" ", "+", addresses$street)
+  addresses$street = gsub("apt", "", addresses$street)
+  addresses$zip = substring(addresses$zip, 1, 5)
+  addresses = subset(addresses, street != "")
+  
+  mapquest = mapquest.geocoder(addresses$id, addresses$street, addresses$city, addresses$state,
+                               addresses$zip, mapquest.key, year = 2000)
+  mapquest$GEOID = as.character(mapquest$GEOID)
+  mapquest$GEOID = ifelse(nchar(mapquest$GEOID) == 11, paste("0", mapquest$GEOID, sep = ""), 
+                          mapquest$GEOID)
+  
+  variables=paste("P043007,P043014,P043003,P043010,P088002,P088003,P088004,",
+                  "P088001,P053001,H085001,P037003,P037004,P037005,P037006,",
+                  "P037007,P037008,P037009,P037020,P037021,P037022,P037023,",
+                  "P037024,P037025,P037026,P037015,P037016,P037017,P037018,",
+                  "P037032,P037033,P037034,P037035,P037001,H020005,H020006,",
+                  "H020007,H020011,H020012,H020013,H020001,H020008", sep = "")
+  
+  us.blocks.merged = census.2000.bg(token = census.key,
+                                    state = "*" ,
+                                    variables = variables)
+  
+  
+  pct_unemp = 100*(us.blocks.merged$P043007 + us.blocks.merged$P043014)/(us.blocks.merged$P043003 + us.blocks.merged$P043010)
+  pct_poverty = 100*(us.blocks.merged$P088002 + us.blocks.merged$P088003 + us.blocks.merged$P088004)/us.blocks.merged$P088001
+  hhinc100 = us.blocks.merged$P053001/max(us.blocks.merged$P053001)*100
+  prop100 = us.blocks.merged$H085001/max(us.blocks.merged$H085001)*100
+  low_educ = 100*(us.blocks.merged$P037003 + us.blocks.merged$P037004 + us.blocks.merged$P037005 + 
+                    us.blocks.merged$P037006 + us.blocks.merged$P037007 + 
+                    us.blocks.merged$P037008 + us.blocks.merged$P037009 +
+                    us.blocks.merged$P037020 + us.blocks.merged$P037021 + 
+                    us.blocks.merged$P037022 + us.blocks.merged$P037023 + 
+                    us.blocks.merged$P037024 + us.blocks.merged$P037025 + 
+                    us.blocks.merged$P037026)/us.blocks.merged$P037001
+  high_educ = 100*(us.blocks.merged$P037015 + us.blocks.merged$P037016 + us.blocks.merged$P037017 + 
+                     us.blocks.merged$P037018 + us.blocks.merged$P037032 + us.blocks.merged$P037033 + 
+                     us.blocks.merged$P037034 + us.blocks.merged$P037035)/us.blocks.merged$P037001
+  crowded = 100*(us.blocks.merged$H020005 + us.blocks.merged$H020006  + us.blocks.merged$H020007 + 
+                   us.blocks.merged$H020011 + us.blocks.merged$H020012 + us.blocks.merged$H020013)/
+    (us.blocks.merged$H020001 + us.blocks.merged$H020008)
+  
+  SES_measures = data.frame(GEOID = us.blocks.merged$GEOID, crowded,prop100, pct_poverty,hhinc100,high_educ,low_educ,pct_unemp)
+  SES_measures = SES_measures[complete.cases(SES_measures),] #THIS IS WHERE IT GETS SHRUNK to include only complete rows
+  SES_score = 50 + (-0.07*SES_measures$crowded) + (0.08*SES_measures$prop100) + (-0.10*SES_measures$pct_poverty) + 
+    (0.11*SES_measures$hhinc100) + (0.10*SES_measures$high_educ) + (-0.11*SES_measures$low_educ) + 
+    (-0.08*SES_measures$pct_unemp)
+  
+  index = data.frame(GEOID = SES_measures$GEOID, SES_score)
+  index$GEOID = as.character(index$GEOID)
+  index$GEOID = ifelse(nchar(index$GEOID) == 11, paste("0", index$GEOID, sep = ""),
+                       index$GEOID)
+  index.needed = index[index$GEOID %in% mapquest$GEOID,]  
+  final.merge = join(mapquest, index.needed)
+  final = subset(final.merge, select = c(id, lat, long, GEOID, SES_score))
+  final
+}  
 
 
 #'
+
 
 get.counties = function(single.state, token){
   process.api.data(fromJSON(file=url(
@@ -424,4 +492,3 @@ expand.states = function(a){
   }
   thing
 }
-
