@@ -2,6 +2,7 @@
 % Please edit documentation in R/demogromatics-functions.R
 \name{census.2000.bg}
 \alias{census.2000.bg}
+\title{2000 block group data (deprecated)}
 \usage{
 census.2000.bg(token, state = "*", variables)
 }
