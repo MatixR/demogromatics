@@ -21,4 +21,5 @@ census.2000.bg(token, state = "*", variables)
 process.shapefiles(folder, shapefile)
 mapquest.geocoder(id, street, city, state, zip, key, year)
 process.api.data(datalist)
+SES.index(addresses, mapquest.key, census.key)
  }
