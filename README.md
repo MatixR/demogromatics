@@ -11,6 +11,15 @@ devtools::install_github("nancyorgan/demogromatics")
 library("demogromatics")
 ```
 
+### About
+
+This package provides tools for:
+- Batch-downloading United States Census data
+- Downloading and processing geographic shapefiles in R
+- Geocoding addresses
+- Matching coordinates with a Federal Informatin Processing Standards (FIPS) code
+- Generating a nationwide SES Index based on work by the Agency for Healthcare Research and Quality (AHRQ)
+
 ### Credit
 
 Data obtained using this package comes from the United States Census Bureau. The SES Index was developed by the Agency for Healthcare Research and Quality (AHRQ). Information about the index can be found on the AHRQ website at https://archive.ahrq.gov/research/findings/final-reports/medicareindicators/medicareindicators3.html 
