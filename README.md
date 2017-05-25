@@ -15,8 +15,6 @@ library("demogromatics")
 
 Data obtained using this package comes from the United States Census Bureau. The SES Index was developed by the Agency for Healthcare Research and Quality (AHRQ). Information about the index can be found on the AHRQ website at https://archive.ahrq.gov/research/findings/final-reports/medicareindicators/medicareindicators3.html 
 
-Thank you for using demogromatics! If you use this package for research or publication purposes please cite this package and the author, Nancy Organ. 
-
 ### Functions Overview
 
 ```r
