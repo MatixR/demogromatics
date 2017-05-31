@@ -6,15 +6,14 @@
 #'@export
 #'@examples
 #'process.shapefiles(folder = "./my_shapefiles", shapefile = "tl_2010_47_county00")
-#'
+#'process.shapefiles(folder = "./my_shapefiles", shapefile = "tl_2010_53_bg10")
+
 
 process.shapefiles = function(folder, shapefile){
   block = readOGR(dsn = folder, layer = shapefile)
   block@data$id = rownames(block@data)
   block.points = fortify(block, region = "id")
   block.df = join(block.points, block@data, by = "id")
-  #block.df = subset(block.df, select = c(long, lat, group, BKGPIDFP00))
-  #names(block.df) = c("long", "lat", "group", "GEOID")
   block.df
 }
 
@@ -48,7 +47,7 @@ process.api.data = function(datalist){
 #'5 -88.22340 34.99554   0.1 470719806003
 #'6 -88.22428 34.99554   0.1 470719806003
 #'
-#'
+#'TN_2010 = download.shapefiles(url = c("https://www2.census.gov/geo/tiger/TIGER2010/BG/2010/tl_2010_47_bg10.zip"))
 #'
 download.shapefiles = function(url){
   state.shapes = list(rep(data.frame(NULL), length(url)))
@@ -78,41 +77,43 @@ download.shapefiles = function(url){
 #'@details There are NO DEFAULTS set. 
 #'
 #'
-census.geocoder = function(id, street, city, state, zip, year){
+census.geocoder = function (id, street, city, state, zip, year){
   street = gsub("[.#,]", "", street)
   street = gsub(" ", "+", street)
   city = gsub(" ", "", city)
   zip = substring(zip, 1, 5)
-  url = paste("http://geocoding.geo.census.gov/geocoder/geographies/",
-            "address?street=", street,
-            "&city=", city, 
-            "&state=", state,
-            "&zip=", zip,
-            "&benchmark=Public_AR_Census2010&vintage=Census2010_Census2010&",
-            "layers=10&format=json", sep = "")
-
-  doc = lapply(url, function(x) {fromJSON(file = x)})
-  scraped = lapply(doc, function(x){ data.frame(unlist(x))})
-  scraped = lapply(scraped, function(x) {x[grep("coordinates.x$|coordinates.y$|GEOID$",row.names(x)),]})
-
+  url = paste("https://geocoding.geo.census.gov/geocoder/geographies/", 
+              "address?street=", street, "&city=", city, "&state=", 
+              state, "&zip=", zip, "&benchmark=Public_AR_Census2010&vintage=Census2010_Census2010&", 
+              "layers=10&format=json", sep = "")
+  doc = lapply(url, function(x){
+    unlist(fromJSON(file = x))
+  })
+  scraped = lapply(doc, function(x){
+    x[grep("coordinates.x|coordinates.y|GEOID", names(x))]
+  })
   scraped.frame = data.frame(NULL)
-
-  for(i in 1:length(scraped)){
-    scraped.frame[i,1] = ifelse(!is.na(unlist(scraped[i])[2]), as.numeric(as.character(unlist(scraped[i])[2])), NA)
-    scraped.frame[i,2] = ifelse(!is.na(unlist(scraped[i])[1]), as.numeric(as.character(unlist(scraped[i])[1])), NA)
-    scraped.frame[i,3] = ifelse(!is.na(unlist(scraped[i])[3]) & year == 2010, as.numeric(as.character(unlist(scraped[i])[3])),
-                        ifelse(!is.na(unlist(scraped[i])[3]) & year != 2010, FIPS.find(long = scraped.frame[i,2], lat = scraped.frame[i,1], year), 
-                                       NA))
-    scraped.frame[i,4] = street[i]
-    scraped.frame[i,5] = city[i]
-    scraped.frame[i,6] = state[i]
-    scraped.frame[i,7] = zip[i]
+  pb <- txtProgressBar(min = 0, max = length(scraped), style = 3)
+  for (i in 1:length(scraped)) {
+    scraped.frame[i, 1] = ifelse(!is.na(unlist(scraped[i])["result.addressMatches.coordinates.y"]), 
+                                 as.numeric(as.character(unlist(scraped[i])["result.addressMatches.coordinates.y"])), NA)
+    scraped.frame[i, 2] = ifelse(!is.na(unlist(scraped[i])["result.addressMatches.coordinates.x"]), 
+                                 as.numeric(as.character(unlist(scraped[i])["result.addressMatches.coordinates.x"])), NA)
+    scraped.frame[i, 3] = ifelse(!is.na(scraped.frame[i, 1]) & !is.na(scraped.frame[i, 2]),
+                                 FIPS.find(long = scraped.frame[i, 2], lat = scraped.frame[i, 1], year), NA)
+    scraped.frame[i, 4] = street[i]
+    scraped.frame[i, 5] = city[i]
+    scraped.frame[i, 6] = state[i]
+    scraped.frame[i, 7] = zip[i]
+    setTxtProgressBar(pb, i)
   }
   scraped.frame = cbind(id, scraped.frame)
-  names(scraped.frame) = c("id", "lat", "long", "GEOID", "street", "city", "state", "zip")
+  names(scraped.frame) = c("id", "lat", "long", "GEOID", "street", 
+                           "city", "state", "zip")
   return(scraped.frame)
 }
 
+#' 2000 Block Group Data (deprecated)
 #'@param token Go to http://www.census.gov/developers/ to request an API key. This function will not work if you do not have your own unique key. There is no default.
 #'@param state A state FIPS code (stored as a character, ie "47"). Defaults to "*" for every state in the US. 
 #'@param variables The desired variables for which you would like data. Variable names found here: http://api.census.gov/data/2000/sf3/variables.html
@@ -162,6 +163,49 @@ census.2000.bg = function(token, state = "*", variables ){
 
 
 
+#'@param token Go to http://www.census.gov/developers/ to request an API key. This function will not work if you do not have your own unique key. There is no default.
+#'@param state A state FIPS code (stored as a character, ie "47"). Defaults to "*" for every state in the US. 
+#'@param variables The desired variables for which you would like data. Variable names found here: http://api.census.gov/data/2011/acs5/variables.html
+#'@export
+#'@examples
+#'test = acs5.2013.blockgroup(token = "yourkey", state = c("47", "53), variables = c("B01003_001E", "B02001_002E", "B02001_003E"))
+#'head(test)
+#'GEOID B01003_001E B02001_002E B02001_003E
+#'1 470010201001        1416         719         418
+#'2 470010201002        1639        1246         341
+#'3 470010202011        2838        2384         221
+#'4 470010202012        1220         948         133
+#'5 470010202021        1526        1406          18
+#'6 470010202022        1232        1083          43
+
+
+acs5.2013.blockgroup = function(token, state = "*", variables ){
+  
+  county.url = paste0("http://api.census.gov/data/2013/acs5?key=", token,"&get=B01003_001E&for=county:*&in=state:", state)
+  mycounties.us = rbindlist(lapply(county.url, function(x){process.api.data(fromJSON(file = url(x)))[,c("county", "state")]}))
+  vars = paste0("http://api.census.gov/data/2013/acs5?key=", token, "&get=",variables,"&for=block+group:*&in=state:")
+  per.county.us = unlist(lapply(vars, function(x){url = paste0(x, mycounties.us$state, "+county:", mycounties.us$county)}))
+  
+  us.blocks = lapply(per.county.us, function(x){process.api.data(fromJSON(file=url(x)))})
+  us.blocks = lapply(us.blocks, function(x) melt(x, id.vars = c("state", "county", "tract", "block group")))
+  us.blocks.merged = data.frame(rbindlist(us.blocks))
+  us.blocks.merged$county = ifelse(nchar(us.blocks.merged$county) == 1, paste("00",us.blocks.merged$county, sep = ""),
+                                   ifelse(nchar(us.blocks.merged$county) == 2, paste("0", us.blocks.merged$county, sep = ""),
+                                          us.blocks.merged$county))
+  
+  us.blocks.merged$tract = ifelse(nchar(us.blocks.merged$tract) == 3, paste("000",us.blocks.merged$tract, sep = ""),
+                                  ifelse(nchar(us.blocks.merged$tract) == 4, paste("00", us.blocks.merged$tract, sep = ""),
+                                         ifelse(nchar(us.blocks.merged$tract) == 5, paste("0", us.blocks.merged$tract, sep = ""),
+                                                us.blocks.merged$tract)))
+  
+  us.blocks.merged$GEOID = paste0(us.blocks.merged$state, us.blocks.merged$county, us.blocks.merged$tract, us.blocks.merged$block.group)
+  us.blocks.merged = subset(us.blocks.merged, select = -c(state, county, tract, block.group))
+  us.blocks.merged$value = as.numeric(us.blocks.merged$value)
+  us.blocks.merged = dcast(us.blocks.merged, GEOID ~ variable)
+  us.blocks.merged
+}
+
+
 #'Geocodes street addresses to latitude, longitude, and desired year's FIPS code (GEOID).
 #'@param id Name of each address or row in the data.frame containing addresses
 #'@param street Street address excluding appartment or unit numbers
@@ -209,8 +253,7 @@ mapquest.geocoder = function(id, street, city, state, zip, key, year){
 #'FIPS.find(lat = 37.87622, long = -122.2585, year = 2000)
 #'[1] "060014225002"
 #'
-#'
-#'
+
 FIPS.find = function(lat, long, year){
   url = paste("http://data.fcc.gov/api/block/", year,
               "/find?latitude=", lat,
@@ -224,8 +267,6 @@ FIPS.find = function(lat, long, year){
   fips = lapply(fips, function(x) {substr(x, 1, 12)})
   as.vector(unlist(fips))
 }
-
-
 
 
 #' State-level Decennial Census data
