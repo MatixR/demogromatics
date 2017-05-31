@@ -162,7 +162,7 @@ census.2000.bg = function(token, state = "*", variables ){
 }
 
 
-
+#' Block-Group Level American Community Survey 5-Year Data from 2013
 #'@param token Go to http://www.census.gov/developers/ to request an API key. This function will not work if you do not have your own unique key. There is no default.
 #'@param state A state FIPS code (stored as a character, ie "47"). Defaults to "*" for every state in the US. 
 #'@param variables The desired variables for which you would like data. Variable names found here: http://api.census.gov/data/2011/acs5/variables.html
@@ -294,6 +294,28 @@ state.data = function(token, state = "*", variables, year = 2010, survey = "sf1"
   rbind.dat
 }
 
+
+#' State Level American Community Survey 5-Year Data from 2013
+#' @param token Unique API token
+#' @param state Vector of state numbers. Defaults to "*" for all states. 
+#' @param variables Vector of variable codes.
+#' @export
+#' @examples
+#' acs5.2013.state(token, state = c("47", "53"), variables = c("B01003_001E", "B02001_002E", "B02001_003E"))
+
+acs5.2013.state = function(token, state = "*", variables){
+  base = paste0("http://api.census.gov/data/2011/acs5?key=", token,"&get=", variables)
+  ss = paste0("&for=state:", state)
+  state.url = state = apply(expand.grid(base, ss), 1, function(x){paste0(x[1], x[2])})
+  mystates.us = lapply(state.url, FUN = function(x){process.api.data(fromJSON(file = url(x)))})
+  mystates.us = lapply(mystates.us, function(x) melt(x, id.vars = c("state")))
+  
+  rbind.dat = data.frame(rbindlist(mystates.us))
+  rbind.dat = dcast(rbind.dat, state ~ variable)
+  rbind.dat
+}
+
+
 #' County-level Decennial Census data
 #' @param token Unique API token
 #' @param state Vector of state numbers. Defaults to "*" for all states. 
@@ -334,6 +356,38 @@ county.data = function(token, state = "*", county = "*", variables, year = 2010,
   process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
   rbind.dat = data.frame(rbindlist(process.url))
   rbind.dat = rbind.dat[, c(tail(seq_len(ncol(rbind.dat)), 2), seq_len(ncol(rbind.dat) - 2))] 
+  rbind.dat
+}
+
+#' County Level American Community Survey 5-Year Data from 2013
+#' @param token Unique API token
+#' @param state Vector of state numbers. Defaults to "*" for all states. 
+#' @param county Vector of county numbers. Defaults to "*" for all counties. 
+#' @param variables Vector of variable codes.
+#' @export
+#' @examples
+#' example = acs5.2013.county(token, state = c("47", "53"), county = "*", variables)
+#' example = acs5.2013.county(token, variables =  variables)
+#' head(example)
+#' state county B01003_001E B02001_002E B02001_003E
+#' 1    01    001       53944       42577        9755
+#' 2    01    003      179523      155068       16936
+#' 3    01    005       27546       13576       12632
+#' 4    01    007       22746       17437        5153
+#' 5    01    009       57140       54446         806
+#' 6    01    011       10877        3115        7619
+
+acs5.2013.county = function(token, state = "*", county = "*", variables){
+  base = paste0("http://api.census.gov/data/2011/acs5?key=", token,"&get=", variables)
+  cc = paste0("&for=county:", county)
+  ss = paste0("&in=state:", state)
+  county_state = apply(expand.grid(cc, ss), 1, function(x){paste0(x[1], x[2])})
+  county.url = apply(expand.grid(base, county_state), 1, function(x){paste0(x[1], x[2])})
+  mycounties.us = lapply(county.url, FUN = function(x){process.api.data(fromJSON(file = url(x)))})
+  us.blocks = lapply(mycounties.us, function(x) melt(x, id.vars = c("state", "county")))
+  
+  rbind.dat = data.frame(rbindlist(us.blocks))
+  rbind.dat = dcast(rbind.dat, state + county ~ variable)
   rbind.dat
 }
 
