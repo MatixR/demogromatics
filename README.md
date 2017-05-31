@@ -50,4 +50,7 @@ I am currently working on updating the demogromatics package to reflect more rec
 The current version of demogromatics supports US Census 2000 and 2010 Summary File 1 and 3 demographics and corresponding shape files at the block group, tract, county, and state levels.
 
 Dependencies are R (>= 3.0.2), rjson, rgdal, ggplot2, data.table, Hmisc, plyr, XML
+<<<<<<< HEAD
 testetst
+=======
+>>>>>>> 4c50201dbf5fdc0e500ca089332ce92a30d9868e
