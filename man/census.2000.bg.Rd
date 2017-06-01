@@ -17,7 +17,7 @@ census.2000.bg(token, state = "*", variables)
 2000 Block Group Data (deprecated)
 }
 \examples{
-example = census.2000.bg(token = "nancysKey", state = "47", variables = "P001001")
+example = census.2000.bg(token = "yourkey", state = "47", variables = "P001001")
 head(example)
 P001001        GEOID
 1    1035 470010201001
@@ -26,8 +26,4 @@ P001001        GEOID
 4     970 470010202001
 5    3519 470010202002
 6     714 470010202003
-
-
-
-
 }
