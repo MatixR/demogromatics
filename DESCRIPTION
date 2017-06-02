@@ -14,7 +14,10 @@ Depends:
     Hmisc,
     plyr,
     XML, 
-    broom
+    broom,
+    rgeos,
+    maptools,
+    gpclib
 LazyData: true
 LazyLoad: true
 RoxygenNote: 6.0.1

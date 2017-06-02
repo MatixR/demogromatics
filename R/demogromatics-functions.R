@@ -33,7 +33,8 @@ process.api.data = function(datalist){
 }
 
 
-#'Batch downloads, unzips, and processes TIGER shapefiles. Unprocessed files are stored in a temporary directory and deleted post facto. 
+#'Batch downloads, unzips, and processes TIGER shapefiles. 
+#'Unprocessed files are stored in a temporary directory and deleted post facto. Be sure to use https if you encounter issues. 
 #'@param url URL to download page for TIGER shapefiles.
 #'@export
 #'@examples
@@ -48,7 +49,7 @@ process.api.data = function(datalist){
 #'6 -88.22428 34.99554   0.1 470719806003
 #'
 #'TN_2010 = download.shapefiles(url = c("https://www2.census.gov/geo/tiger/TIGER2010/BG/2010/tl_2010_47_bg10.zip"))
-#'
+
 download.shapefiles = function(url){
   state.shapes = list(rep(data.frame(NULL), length(url)))
   for(i in 1:length(url)){
@@ -89,7 +90,7 @@ FIPS.find = function(lat, long, year){
   as.vector(unlist(fips))
 }
 
-
+#' Mapquest Geocoder
 #'Geocodes street addresses to latitude, longitude, and desired year's FIPS code (GEOID).
 #'@param id Name of each address or row in the data.frame containing addresses
 #'@param street Street address excluding appartment or unit numbers
@@ -430,10 +431,6 @@ acs5.2013.county = function(token, state = "*", county = "*", variables){
   rbind.dat = dcast(rbind.dat, state + county ~ variable)
   rbind.dat
 }
-
-
-
-
 
 
 #' Blockgroup-level Decennial Census data
