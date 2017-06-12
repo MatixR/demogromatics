@@ -335,7 +335,7 @@ census.2000.bg = function(token, state = "*", variables ){
 #'@param variables The desired variables for which you would like data. Variable names found here: http://api.census.gov/data/2011/acs5/variables.html
 #'@export
 #'@examples
-#'test = acs5.2013.blockgroup(token = "yourkey", state = c("47", "53), variables = c("B01003_001E", "B02001_002E", "B02001_003E"))
+#'test = acs5.2011.blockgroup(token = "yourkey", state = c("47", "53), variables = c("B01003_001E", "B02001_002E", "B02001_003E"))
 #'head(test)
 #'GEOID B01003_001E B02001_002E B02001_003E
 #'1 470010201001        1416         719         418
@@ -346,11 +346,11 @@ census.2000.bg = function(token, state = "*", variables ){
 #'6 470010202022        1232        1083          43
 
 
-acs5.2013.blockgroup = function(token, state = "*", variables ){
+acs5.2011.blockgroup = function(token, state = "*", variables ){
   
-  county.url = paste0("http://api.census.gov/data/2013/acs5?key=", token,"&get=B01003_001E&for=county:*&in=state:", state)
+  county.url = paste0("http://api.census.gov/data/2011/acs5?key=", token,"&get=B01003_001E&for=county:*&in=state:", state)
   mycounties.us = rbindlist(lapply(county.url, function(x){process.api.data(fromJSON(file = url(x)))[,c("county", "state")]}))
-  vars = paste0("http://api.census.gov/data/2013/acs5?key=", token, "&get=",variables,"&for=block+group:*&in=state:")
+  vars = paste0("http://api.census.gov/data/2011/acs5?key=", token, "&get=",variables,"&for=block+group:*&in=state:")
   per.county.us = unlist(lapply(vars, function(x){url = paste0(x, mycounties.us$state, "+county:", mycounties.us$county)}))
   
   us.blocks = lapply(per.county.us, function(x){process.api.data(fromJSON(file=url(x)))})
@@ -384,9 +384,9 @@ acs5.2013.blockgroup = function(token, state = "*", variables ){
 #' @param variables Vector of variable codes.
 #' @export
 #' @examples
-#' acs5.2013.state(token, state = c("47", "53"), variables = c("B01003_001E", "B02001_002E", "B02001_003E"))
+#' acs5.2011.state(token, state = c("47", "53"), variables = c("B01003_001E", "B02001_002E", "B02001_003E"))
 
-acs5.2013.state = function(token, state = "*", variables){
+acs5.2011.state = function(token, state = "*", variables){
   base = paste0("http://api.census.gov/data/2011/acs5?key=", token,"&get=", variables)
   ss = paste0("&for=state:", state)
   state.url = state = apply(expand.grid(base, ss), 1, function(x){paste0(x[1], x[2])})
@@ -398,8 +398,6 @@ acs5.2013.state = function(token, state = "*", variables){
   rbind.dat
 }
 
-
-
 #' County Level American Community Survey 5-Year Data from 2013
 #' @param token Unique API token
 #' @param state Vector of state numbers. Defaults to "*" for all states. 
@@ -407,8 +405,8 @@ acs5.2013.state = function(token, state = "*", variables){
 #' @param variables Vector of variable codes.
 #' @export
 #' @examples
-#' example = acs5.2013.county(token, state = c("47", "53"), county = "*", variables)
-#' example = acs5.2013.county(token, variables =  variables)
+#' example = acs5.2011.county(token, state = c("47", "53"), county = "*", variables)
+#' example = acs5.2011.county(token, variables =  variables)
 #' head(example)
 #' state county B01003_001E B02001_002E B02001_003E
 #' 1    01    001       53944       42577        9755
@@ -418,7 +416,7 @@ acs5.2013.state = function(token, state = "*", variables){
 #' 5    01    009       57140       54446         806
 #' 6    01    011       10877        3115        7619
 
-acs5.2013.county = function(token, state = "*", county = "*", variables){
+acs5.2011.county = function(token, state = "*", county = "*", variables){
   base = paste0("http://api.census.gov/data/2011/acs5?key=", token,"&get=", variables)
   cc = paste0("&for=county:", county)
   ss = paste0("&in=state:", state)
@@ -502,9 +500,7 @@ SES.index = function(addresses, mapquest.key, census.key){
   final
 }  
 
-
 #'
-
 
 get.counties = function(single.state, token){
   process.api.data(fromJSON(file=url(
