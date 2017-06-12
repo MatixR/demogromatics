@@ -2,7 +2,8 @@
 % Please edit documentation in R/demogromatics-functions.R
 \name{mapquest.geocoder}
 \alias{mapquest.geocoder}
-\title{Geocodes street addresses to latitude, longitude, and desired year's FIPS code (GEOID).}
+\title{Mapquest Geocoder
+Geocodes street addresses to latitude, longitude, and desired year's FIPS code (GEOID).}
 \usage{
 mapquest.geocoder(id, street, city, state, zip, key, year)
 }
@@ -18,6 +19,7 @@ mapquest.geocoder(id, street, city, state, zip, key, year)
 \item{zip}{Zip code. First five characters are taken}
 }
 \description{
+Mapquest Geocoder
 Geocodes street addresses to latitude, longitude, and desired year's FIPS code (GEOID).
 }
 \details{

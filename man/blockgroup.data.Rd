@@ -28,5 +28,4 @@ Blockgroup-level Decennial Census data
 \examples{
 blockgroup.data(token = token, state = c(47, 48), county = "*", blockgroup = "*", variables = c("P001001","P001001"))
 blockgroup.data(token = token, state = 47, county = 1, blockgroup = "*", variables = c("P001001","P001001"))
-
 }

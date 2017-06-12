@@ -2,7 +2,8 @@
 % Please edit documentation in R/demogromatics-functions.R
 \name{download.shapefiles}
 \alias{download.shapefiles}
-\title{Batch downloads, unzips, and processes TIGER shapefiles. Unprocessed files are stored in a temporary directory and deleted post facto.}
+\title{Batch downloads, unzips, and processes TIGER shapefiles. 
+Unprocessed files are stored in a temporary directory and deleted post facto. Be sure to use https if you encounter issues.}
 \usage{
 download.shapefiles(url)
 }
@@ -10,7 +11,8 @@ download.shapefiles(url)
 \item{url}{URL to download page for TIGER shapefiles.}
 }
 \description{
-Batch downloads, unzips, and processes TIGER shapefiles. Unprocessed files are stored in a temporary directory and deleted post facto.
+Batch downloads, unzips, and processes TIGER shapefiles. 
+Unprocessed files are stored in a temporary directory and deleted post facto. Be sure to use https if you encounter issues.
 }
 \examples{
 TN = download.shapefiles(url = "http://www2.census.gov/geo/tiger/TIGER2010/BG/2000/tl_2010_47_bg00.zip")
@@ -24,5 +26,4 @@ head(TN)
 6 -88.22428 34.99554   0.1 470719806003
 
 TN_2010 = download.shapefiles(url = c("https://www2.census.gov/geo/tiger/TIGER2010/BG/2010/tl_2010_47_bg10.zip"))
-
 }

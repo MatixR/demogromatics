@@ -2,9 +2,9 @@
 
 export(FIPS.find)
 export(SES.index)
-export(acs5.2013.blockgroup)
-export(acs5.2013.county)
-export(acs5.2013.state)
+export(acs5.2011.blockgroup)
+export(acs5.2011.county)
+export(acs5.2011.state)
 export(blockgroup.data)
 export(census.2000.bg)
 export(county.data)

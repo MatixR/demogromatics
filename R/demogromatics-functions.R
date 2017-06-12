@@ -249,7 +249,7 @@ tract.data = function(token, state = "*", county = "*", variables, year = 2010, 
 #' @examples
 #' blockgroup.data(token = token, state = c(47, 48), county = "*", blockgroup = "*", variables = c("P001001","P001001"))
 #' blockgroup.data(token = token, state = 47, county = 1, blockgroup = "*", variables = c("P001001","P001001"))
-#' 
+ 
 blockgroup.data = function(token, state = "*", county = "*", blockgroup = "*", variables, year = 2010, survey = "sf1"){
   state = as.character(state)
   county = as.character(county)
@@ -357,13 +357,13 @@ acs5.2011.blockgroup = function(token, state = "*", variables ){
   us.blocks = lapply(us.blocks, function(x) melt(x, id.vars = c("state", "county", "tract", "block group")))
   us.blocks.merged = data.frame(rbindlist(us.blocks))
   us.blocks.merged$county = ifelse(nchar(us.blocks.merged$county) == 1, paste("00",us.blocks.merged$county, sep = ""),
-                                   ifelse(nchar(us.blocks.merged$county) == 2, paste("0", us.blocks.merged$county, sep = ""),
-                                          us.blocks.merged$county))
+                            ifelse(nchar(us.blocks.merged$county) == 2, paste("0", us.blocks.merged$county, sep = ""),
+                             us.blocks.merged$county))
   
   us.blocks.merged$tract = ifelse(nchar(us.blocks.merged$tract) == 3, paste("000",us.blocks.merged$tract, sep = ""),
-                                  ifelse(nchar(us.blocks.merged$tract) == 4, paste("00", us.blocks.merged$tract, sep = ""),
-                                         ifelse(nchar(us.blocks.merged$tract) == 5, paste("0", us.blocks.merged$tract, sep = ""),
-                                                us.blocks.merged$tract)))
+                           ifelse(nchar(us.blocks.merged$tract) == 4, paste("00", us.blocks.merged$tract, sep = ""),
+                           ifelse(nchar(us.blocks.merged$tract) == 5, paste("0", us.blocks.merged$tract, sep = ""),
+                              us.blocks.merged$tract)))
   
   us.blocks.merged$GEOID = paste0(us.blocks.merged$state, us.blocks.merged$county, us.blocks.merged$tract, us.blocks.merged$block.group)
   us.blocks.merged = subset(us.blocks.merged, select = -c(state, county, tract, block.group))
@@ -371,11 +371,6 @@ acs5.2011.blockgroup = function(token, state = "*", variables ){
   us.blocks.merged = dcast(us.blocks.merged, GEOID ~ variable)
   us.blocks.merged
 }
-
-
-
-
-
 
 
 #' State Level American Community Survey 5-Year Data from 2013
