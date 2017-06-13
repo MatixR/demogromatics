@@ -345,7 +345,6 @@ census.2000.bg = function(token, state = "*", variables ){
 #'5 470010202021        1526        1406          18
 #'6 470010202022        1232        1083          43
 
-
 acs5.2011.blockgroup = function(token, state = "*", variables ){
   
   county.url = paste0("http://api.census.gov/data/2011/acs5?key=", token,"&get=B01003_001E&for=county:*&in=state:", state)
@@ -353,7 +352,15 @@ acs5.2011.blockgroup = function(token, state = "*", variables ){
   vars = paste0("http://api.census.gov/data/2011/acs5?key=", token, "&get=",variables,"&for=block+group:*&in=state:")
   per.county.us = unlist(lapply(vars, function(x){url = paste0(x, mycounties.us$state, "+county:", mycounties.us$county)}))
   
-  us.blocks = lapply(per.county.us, function(x){process.api.data(fromJSON(file=url(x)))})
+  #us.blocks = lapply(per.county.us, function(x){process.api.data(fromJSON(file=url(x)))})
+  
+  us.blocks = list()
+  pb <- txtProgressBar(min = 0, max = length(per.county.us), style = 3)
+  for(i in 1:length(per.county.us)){
+    us.blocks[[i]] = process.api.data(fromJSON(file = url(per.county.us[i])))
+    setTxtProgressBar(pb, i)
+  }
+  
   us.blocks = lapply(us.blocks, function(x) melt(x, id.vars = c("state", "county", "tract", "block group")))
   us.blocks.merged = data.frame(rbindlist(us.blocks))
   us.blocks.merged$county = ifelse(nchar(us.blocks.merged$county) == 1, paste("00",us.blocks.merged$county, sep = ""),
