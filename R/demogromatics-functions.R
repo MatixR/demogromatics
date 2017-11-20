@@ -1,4 +1,4 @@
-#' Process TIGER shapefiles
+f#' Process TIGER shapefiles
 #' Process shapefiles into a usable format. This function is helpful if you have already downloaded the shapefiles and need to process them from data stored locally. Alternatively, you can use this function as part of an API download.
 #'
 #'@param folder The path of the folder that contains the shapefile and other files with .dbf, .prj, .xml, and .shx extensions.
@@ -21,7 +21,7 @@ process.shapefiles = function(folder, shapefile){
 #'@param datalist The resulting list from using fromJSON()
 #'@export
 #'@examples
-#'process.api.data(fromJSON(file=url(paste("http://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=county:*&in=state:*", sep = ""))))
+#'process.api.data(fromJSON(file=url(paste("https://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=county:*&in=state:*", sep = ""))))
 #'
 
 process.api.data = function(datalist){
@@ -38,7 +38,7 @@ process.api.data = function(datalist){
 #'@param url URL to download page for TIGER shapefiles.
 #'@export
 #'@examples
-#'TN = download.shapefiles(url = "http://www2.census.gov/geo/tiger/TIGER2010/BG/2000/tl_2010_47_bg00.zip")
+#'TN = download.shapefiles(url = "https://www2.census.gov/geo/tiger/TIGER2010/BG/2000/tl_2010_47_bg00.zip")
 #'head(TN)
 #'       long      lat group        GEOID
 #'1 -88.21252 34.99558   0.1 470719806003
@@ -77,7 +77,7 @@ download.shapefiles = function(url){
 #'
 
 FIPS.find = function(lat, long, year){
-  url = paste("http://data.fcc.gov/api/block/", year,
+  url = paste("https://data.fcc.gov/api/block/", year,
               "/find?latitude=", lat,
               "&longitude=", long,
               "&showall=true",
@@ -107,7 +107,7 @@ FIPS.find = function(lat, long, year){
 mapquest.geocoder = function(id, street, city, state, zip, key, year){
   coordinates = data.frame(NULL)
   for(i in 1:length(id)){
-    url = paste('http://open.mapquestapi.com/geocoding/v1/address?key=', URLdecode(key),
+    url = paste('https://open.mapquestapi.com/geocoding/v1/address?key=', URLdecode(key),
                 '&outFormat=xml&xml=<address><location>',
                 '<street>', street[i], '</street>',
                 '<city>', city[i], '</city>',
@@ -145,7 +145,7 @@ state.data = function(token, state = "*", variables, year = 2010, survey = "sf1"
   state = as.character(state)
   variables = paste(variables, collapse = ",")
   year = as.character(year)
-  my.url = matrix(paste("http://api.census.gov/data/", year, "/", survey, "?key=", token,
+  my.url = matrix(paste("https://api.census.gov/data/", year, "/", survey, "?key=", token,
                         "&get=",variables, "&for=state:", state, sep = ""), ncol = 1)
   
   process.url = apply(my.url, 1, function(x) process.api.data(fromJSON(file=url(x))))
@@ -175,8 +175,8 @@ county.data = function(token, state = "*", county = "*", variables, year = 2010,
   
   if(state == "*"){
     state = process.api.data(fromJSON(file=url(
-      paste("http://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=state:*", sep = ""))))$state
-    my.url = matrix(paste("http://api.census.gov/data/", year, "/", survey, "?key=", token, "&get=", 
+      paste("https://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=state:*", sep = ""))))$state
+    my.url = matrix(paste("https://api.census.gov/data/", year, "/", survey, "?key=", token, "&get=", 
                           variables,"&for=county:*&in=state:", state, sep = ""),ncol = 1)
   }
   if(state != "*"){
@@ -186,7 +186,7 @@ county.data = function(token, state = "*", county = "*", variables, year = 2010,
     }
     names(mycounties) = state
     mystates = expand.states(mycounties)
-    my.url = matrix(paste("http://api.census.gov/data/", year, "/", survey, "?key=", token, "&get=", 
+    my.url = matrix(paste("https://api.census.gov/data/", year, "/", survey, "?key=", token, "&get=", 
                           variables,"&for=county:", unlist(mycounties), "&in=state:", 
                           unlist(mystates), sep = ""),ncol = 1)
   }
@@ -217,16 +217,16 @@ tract.data = function(token, state = "*", county = "*", variables, year = 2010, 
   
   if(state == "*"){
     state = process.api.data(fromJSON(file=url(
-      paste("http://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=state:*", sep = ""))))$state
+      paste("https://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=state:*", sep = ""))))$state
   }
   if(county == "*"){
-    my.url = matrix(paste("http://api.census.gov/data/", year, "/", survey, "?key=", token,
+    my.url = matrix(paste("https://api.census.gov/data/", year, "/", survey, "?key=", token,
                           "&get=",variables,"&for=tract:*&in=state:", state, sep = ""),ncol = 1)
   }else{
     mycounties = list(county)
     names(mycounties) = state
     mystates = expand.states(mycounties)
-    my.url = matrix(paste("http://api.census.gov/data/", year, "/", survey, "?key=", token,
+    my.url = matrix(paste("https://api.census.gov/data/", year, "/", survey, "?key=", token,
                           "&get=",variables,"&for=tract:*&in=state:", unlist(mystates),
                           "+county:", unlist(mycounties), sep = ""),ncol = 1)
   }
@@ -259,20 +259,20 @@ blockgroup.data = function(token, state = "*", county = "*", blockgroup = "*", v
   
   if(state == "*"){
     state = process.api.data(fromJSON(file=url(
-      paste("http://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=state:*", sep = ""))))$state
+      paste("https://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=state:*", sep = ""))))$state
   }
   
   if(county == "*"){
     mycounties = sapply(state, get.counties, token = token)
     #mystates = expand.states(mycounties)
-    my.url = matrix(paste("http://api.census.gov/data/", year, "/", survey , "?key=", token,
+    my.url = matrix(paste("https://api.census.gov/data/", year, "/", survey , "?key=", token,
                           "&get=",variables,"&for=block+group:*&in=state:", state,
                           "+county:", unlist(mycounties), sep = ""),ncol = 1)
   }else{
     mycounties = list(county)
     names(mycounties) = state
     mystates = expand.states(mycounties)
-    my.url = matrix(paste("http://api.census.gov/data/", year, "/", survey, "?key=", token,
+    my.url = matrix(paste("https://api.census.gov/data/", year, "/", survey, "?key=", token,
                           "&get=",variables,"&for=block+group:*&in=state:", unlist(mystates),
                           "+county:", unlist(mycounties), sep = ""),ncol = 1)
   }
@@ -284,9 +284,9 @@ blockgroup.data = function(token, state = "*", county = "*", blockgroup = "*", v
 }
 
 #' 2000 Block Group Data (deprecated)
-#'@param token Go to http://www.census.gov/developers/ to request an API key. This function will not work if you do not have your own unique key. There is no default.
+#'@param token Go to https://www.census.gov/developers/ to request an API key. This function will not work if you do not have your own unique key. There is no default.
 #'@param state A state FIPS code (stored as a character, ie "47"). Defaults to "*" for every state in the US. 
-#'@param variables The desired variables for which you would like data. Variable names found here: http://api.census.gov/data/2000/sf3/variables.html
+#'@param variables The desired variables for which you would like data. Variable names found here: https://api.census.gov/data/2000/sf3/variables.html
 #'@export
 #'@examples
 #'example = census.2000.bg(token = "yourkey", state = "47", variables = "P001001")
@@ -300,11 +300,11 @@ blockgroup.data = function(token, state = "*", county = "*", blockgroup = "*", v
 #'6     714 470010202003
 
 census.2000.bg = function(token, state = "*", variables ){
-  mycounties.us = process.api.data(fromJSON(file=url(paste("http://api.census.gov/data/2000/sf3?key=", 
+  mycounties.us = process.api.data(fromJSON(file=url(paste("https://api.census.gov/data/2000/sf3?key=", 
                                                            token,"&get=P001001&for=county:*&in=state:", state, sep = ""))))$county 
-  mystates.us = process.api.data(fromJSON(file=url(paste("http://api.census.gov/data/2000/sf3?key=", 
+  mystates.us = process.api.data(fromJSON(file=url(paste("https://api.census.gov/data/2000/sf3?key=", 
                                                          token,"&get=P001001&for=county:*&in=state:", state, sep = ""))))$state
-  per.county.us = matrix(paste(paste(paste("http://api.census.gov/data/2000/sf3?key=", token,
+  per.county.us = matrix(paste(paste(paste("https://api.census.gov/data/2000/sf3?key=", token,
                                            "&get=",variables,"&for=block+group:*&in=state:", mystates.us, sep = ""),
                                      "+county:", sep = ""), mycounties.us, sep = ""),ncol = 1)
   
@@ -330,9 +330,9 @@ census.2000.bg = function(token, state = "*", variables ){
 
 
 #' Block-Group Level American Community Survey 5-Year Data from 2013
-#'@param token Go to http://www.census.gov/developers/ to request an API key. This function will not work if you do not have your own unique key. There is no default.
+#'@param token Go to https://www.census.gov/developers/ to request an API key. This function will not work if you do not have your own unique key. There is no default.
 #'@param state A state FIPS code (stored as a character, ie "47"). Defaults to "*" for every state in the US. 
-#'@param variables The desired variables for which you would like data. Variable names found here: http://api.census.gov/data/2011/acs5/variables.html
+#'@param variables The desired variables for which you would like data. Variable names found here: https://api.census.gov/data/2011/acs5/variables.html
 #'@export
 #'@examples
 #'test = acs5.2011.blockgroup(token = "yourkey", state = c("47", "53), variables = c("B01003_001E", "B02001_002E", "B02001_003E"))
@@ -347,9 +347,9 @@ census.2000.bg = function(token, state = "*", variables ){
 
 acs5.2011.blockgroup = function(token, state = "*", variables ){
   
-  county.url = paste0("http://api.census.gov/data/2011/acs5?key=", token,"&get=B01003_001E&for=county:*&in=state:", state)
+  county.url = paste0("https://api.census.gov/data/2011/acs5?key=", token,"&get=B01003_001E&for=county:*&in=state:", state)
   mycounties.us = rbindlist(lapply(county.url, function(x){process.api.data(fromJSON(file = url(x)))[,c("county", "state")]}))
-  vars = paste0("http://api.census.gov/data/2011/acs5?key=", token, "&get=",variables,"&for=block+group:*&in=state:")
+  vars = paste0("https://api.census.gov/data/2011/acs5?key=", token, "&get=",variables,"&for=block+group:*&in=state:")
   per.county.us = unlist(lapply(vars, function(x){url = paste0(x, mycounties.us$state, "+county:", mycounties.us$county)}))
   
   #us.blocks = lapply(per.county.us, function(x){process.api.data(fromJSON(file=url(x)))})
@@ -389,7 +389,7 @@ acs5.2011.blockgroup = function(token, state = "*", variables ){
 #' acs5.2011.state(token, state = c("47", "53"), variables = c("B01003_001E", "B02001_002E", "B02001_003E"))
 
 acs5.2011.state = function(token, state = "*", variables){
-  base = paste0("http://api.census.gov/data/2011/acs5?key=", token,"&get=", variables)
+  base = paste0("https://api.census.gov/data/2011/acs5?key=", token,"&get=", variables)
   ss = paste0("&for=state:", state)
   state.url = state = apply(expand.grid(base, ss), 1, function(x){paste0(x[1], x[2])})
   mystates.us = lapply(state.url, FUN = function(x){process.api.data(fromJSON(file = url(x)))})
@@ -419,7 +419,7 @@ acs5.2011.state = function(token, state = "*", variables){
 #' 6    01    011       10877        3115        7619
 
 acs5.2011.county = function(token, state = "*", county = "*", variables){
-  base = paste0("http://api.census.gov/data/2011/acs5?key=", token,"&get=", variables)
+  base = paste0("https://api.census.gov/data/2011/acs5?key=", token,"&get=", variables)
   cc = paste0("&for=county:", county)
   ss = paste0("&in=state:", state)
   county_state = apply(expand.grid(cc, ss), 1, function(x){paste0(x[1], x[2])})
@@ -435,8 +435,8 @@ acs5.2011.county = function(token, state = "*", county = "*", variables){
 
 #' Blockgroup-level Decennial Census data
 #' @param addresses File path to a .csv or data frame of addresses
-#' @param mapquest.key You can get a key by creating a developper's account at http://developer.mapquest.com/web/info/account/app-keys
-#' @param census.key You can get a key from http://www.census.gov/developers/
+#' @param mapquest.key You can get a key by creating a developper's account at https://developer.mapquest.com/web/info/account/app-keys
+#' @param census.key You can get a key from https://www.census.gov/developers/
 #' @export
 
 
@@ -506,7 +506,7 @@ SES.index = function(addresses, mapquest.key, census.key){
 
 get.counties = function(single.state, token){
   process.api.data(fromJSON(file=url(
-    paste("http://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=county:*&in=state:", single.state, sep = ""))))$county
+    paste("https://api.census.gov/data/2000/sf3?key=", token,"&get=P001001&for=county:*&in=state:", single.state, sep = ""))))$county
 }
 
 expand.states = function(a){
