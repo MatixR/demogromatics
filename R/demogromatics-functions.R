@@ -1,4 +1,4 @@
-f#' Process TIGER shapefiles
+#' Process TIGER shapefiles
 #' Process shapefiles into a usable format. This function is helpful if you have already downloaded the shapefiles and need to process them from data stored locally. Alternatively, you can use this function as part of an API download.
 #'
 #'@param folder The path of the folder that contains the shapefile and other files with .dbf, .prj, .xml, and .shx extensions.
